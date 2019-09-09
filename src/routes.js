@@ -12,7 +12,7 @@ routes.post('/users', UserController.store);
 routes.post('/sessions', SessionControler.store);
 
 /**
- * Todas as rotas para baixo, terão o token validado.
+ * Middleware de Autenticação Global para as próximas rotas
  */
 routes.use(authMiddleware);
 
