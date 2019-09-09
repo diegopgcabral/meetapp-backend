@@ -56,7 +56,7 @@ class UserController {
     }
 
     const { email, oldPassword } = req.body;
-    // Busco as informações do usuário logado
+    // Busco as informações do usuário logado pelo ID
     const user = await User.findByPk(req.userId);
 
     // Verifico se o email do "req" já existe na BD.
