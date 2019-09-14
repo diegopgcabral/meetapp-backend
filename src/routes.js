@@ -4,6 +4,8 @@ import multerConfig from './config/multer';
 
 import UserController from './app/controllers/UserController';
 import SessionControler from './app/controllers/SessionController';
+import MeetupController from './app/controllers/MeetupController';
+import OrganizingController from './app/controllers/OrganizingController';
 
 import authMiddleware from './app/middlewares/auth';
 import FileController from './app/controllers/FileController';
@@ -23,7 +25,14 @@ routes.use(authMiddleware);
 
 // Alteração dados do usuário
 routes.put('/users', UserController.update);
-
+// Cadastrar um novo Meetup
+routes.post('/meetups', MeetupController.store);
+// Alterar um Meetup Cadastrado
+routes.put('/meetups/:id', MeetupController.update);
+// Rota para deletar Meetup que pertence ao usuário logado
+routes.delete('/meetups/:id', MeetupController.delete);
+// Listar os Meetups cadastrado pelo usuário logado
+routes.get('/organizing', OrganizingController.index);
 // Upload do arquivo
 routes.post('/files', upload.single('file'), FileController.store);
 
