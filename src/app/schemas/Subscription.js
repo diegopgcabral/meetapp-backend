@@ -21,4 +21,4 @@ const SubscriptionSchema = new mongoose.Schema(
   }
 );
 
-export default mongoose.model('Subscription', SubscriptionSchema);
+export default mongoose.model('Notification', SubscriptionSchema);

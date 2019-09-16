@@ -34,7 +34,7 @@ routes.put('/meetups/:id', MeetupController.update);
 routes.delete('/meetups/:id', MeetupController.delete);
 // Listagem de Meetups
 routes.get('/meetups', MeetupController.index);
-// Listar os Meetups cadastrado pelo usuário logado
+// Listar os Meetups que são organizados pelo usuário logado
 routes.get('/organizing', OrganizingController.index);
 // Realizar inscrições em Meetups do usuário logado
 routes.post('/meetups/:meetupId/subscriptions', SubscriptionController.store);
