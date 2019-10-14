@@ -52,7 +52,7 @@ class SubscriptionController {
      */
     if (meetup.past) {
       return res.status(400).json({
-        error: 'O Meetup selecionado que já ocorreu',
+        error: 'O Meetup selecionado que já foi realizado',
       });
     }
     /**

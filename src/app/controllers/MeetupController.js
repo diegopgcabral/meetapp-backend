@@ -3,19 +3,16 @@ import { Op } from 'sequelize';
 import { isBefore, parseISO, startOfDay, endOfDay } from 'date-fns';
 import Meetup from '../models/Meetup';
 import User from '../models/User';
+import File from '../models/File';
 
 class MeetupController {
   async index(req, res) {
     const where = {};
     const page = req.query.page || 1;
-    /**
-     * Validando a data passada por parametro
-     */
+
     if (req.query.date) {
       const searchDate = parseISO(req.query.date);
-      /**
-       * Buscando Meetup que ocorrem no dia da data enviada
-       */
+
       where.date = {
         [Op.between]: [startOfDay(searchDate), endOfDay(searchDate)],
       };
@@ -23,7 +20,17 @@ class MeetupController {
 
     const meetups = await Meetup.findAll({
       where,
-      include: [User],
+      include: [
+        {
+          model: User,
+          attributes: ['id', 'name'],
+        },
+        {
+          model: File,
+          as: 'banner',
+          attributes: ['id', 'name', 'path'],
+        },
+      ],
       limit: 10,
       offset: 10 * page - 10,
     });
@@ -34,7 +41,7 @@ class MeetupController {
   async store(req, res) {
     const schema = Yup.object().shape({
       title: Yup.string().required(),
-      file_id: Yup.number().required(),
+      banner_id: Yup.number().required(),
       description: Yup.string().required(),
       location: Yup.string().required(),
       date: Yup.date().required(),
@@ -43,16 +50,11 @@ class MeetupController {
     if (!(await schema.isValid(req.body))) {
       return res.status(400).json({ error: 'Erro na validação dos campos' });
     }
-    /**
-     * Preciso verificar se o evento a ser cadastrado não é uma data passada
-     */
+
     if (isBefore(parseISO(req.body.date), new Date())) {
       return res.status(400).json({ error: 'Data do evento inválida' });
     }
 
-    /**
-     * Pego o id do usuário que está logado
-     */
     const user_id = req.userId;
 
     const meetup = await Meetup.create({
@@ -66,7 +68,7 @@ class MeetupController {
   async update(req, res) {
     const schema = Yup.object().shape({
       title: Yup.string(),
-      file_id: Yup.number(),
+      banner_id: Yup.number(),
       description: Yup.string(),
       location: Yup.string(),
       date: Yup.date(),
@@ -75,7 +77,7 @@ class MeetupController {
     if (!(await schema.isValid(req.body))) {
       return res.status(400).json({ error: 'Erro na validação dos campos' });
     }
-    // ID do usuário logado
+
     const user_id = req.userId;
 
     const meetup = await Meetup.findByPk(req.params.id);
@@ -96,7 +98,7 @@ class MeetupController {
 
     // Verifico se o Meetup já aconteceu
     if (meetup.past) {
-      return res.status(400).json({ error: 'Meetup já aconteceu' });
+      return res.status(400).json({ error: 'Meetup já realizado' });
     }
 
     await meetup.update(req.body);
@@ -116,7 +118,7 @@ class MeetupController {
     if (meetup.past) {
       return res
         .status(400)
-        .json({ error: 'Não é permitido excluir Meetup que já ocorreu' });
+        .json({ error: 'Não é permitido excluir Meetup que já foi realizado' });
     }
 
     await meetup.destroy();

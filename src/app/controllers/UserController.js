@@ -17,13 +17,13 @@ class UserController {
     });
     // Validando se os campos de entrada passaram pelas validações.
     if (!(await schema.isValid(req.body))) {
-      return res.status(400).json({ error: 'Validation fails.' });
+      return res.status(400).json({ error: 'Erro na validação dos campos' });
     }
     // Verifico se o usuário já existe na base.
     const userExists = await User.findOne({ where: { email: req.body.email } });
 
     if (userExists) {
-      return res.status(400).json({ error: 'User already exists.' });
+      return res.status(400).json({ error: 'Usuário já cadastrado' });
     }
 
     // Busco os campos para fazer o cadastro do usuário
