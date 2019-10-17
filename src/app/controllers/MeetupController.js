@@ -1,11 +1,26 @@
 import * as Yup from 'yup';
 import { Op } from 'sequelize';
 import { isBefore, parseISO, startOfDay, endOfDay } from 'date-fns';
+
 import Meetup from '../models/Meetup';
 import User from '../models/User';
 import File from '../models/File';
 
 class MeetupController {
+  async show(req, res) {
+    const meetup = await Meetup.findByPk(req.params.id, {
+      include: [
+        {
+          model: File,
+          as: 'banner',
+          attributes: ['id', 'name', 'path', 'url'],
+        },
+      ],
+    });
+
+    return res.json({ meetup });
+  }
+
   async index(req, res) {
     const where = {};
     const page = req.query.page || 1;
@@ -23,7 +38,7 @@ class MeetupController {
       include: [
         {
           model: User,
-          attributes: ['id', 'name'],
+          attributes: ['id', 'name', 'email'],
         },
         {
           model: File,
@@ -31,6 +46,7 @@ class MeetupController {
           attributes: ['id', 'name', 'path'],
         },
       ],
+      order: ['date'],
       limit: 10,
       offset: 10 * page - 10,
     });

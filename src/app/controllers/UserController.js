@@ -53,7 +53,7 @@ class UserController {
     });
     // Verificando se os campos passaram nas validações
     if (!(await schema.isValid(req.body))) {
-      return res.status(400).json({ error: 'Validation fails.' });
+      return res.status(400).json({ error: 'Erro na validação dos campos' });
     }
 
     const { email, oldPassword } = req.body;
@@ -64,21 +64,21 @@ class UserController {
     if (email && email !== user.email) {
       const userExists = await User.findOne({ where: { email } });
       if (userExists) {
-        return res.status(400).json({ error: 'User already exists.' });
+        return res.status(400).json({ error: 'Usuário já cadastrado' });
       }
     }
     // Verifico se a oldPassword == a senha que está cadastrada no BD
     if (oldPassword && !(await user.checkPassword(oldPassword))) {
-      return res.status(401).json({ error: 'Password does not match.' });
+      return res.status(401).json({ error: 'Senha inválida' });
     }
 
     // Se não teve critica, posso atualizar as informações do usuário
-    const { id, name, email: userEmail } = await user.update(req.body);
+    const { id, name } = await user.update(req.body);
 
     return res.json({
       id,
       name,
-      email: userEmail,
+      email,
     });
   }
 }

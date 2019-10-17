@@ -6,7 +6,7 @@ export default async (req, res, next) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader) {
-    return res.status(401).json({ error: 'Token not provided.' });
+    return res.status(401).json({ error: 'Token inválido.' });
   }
   // authHeader - Vem com Bearer como 1º parametro
   // Por isso utilizamos a "," para pegar somente o  2º paramento: token
@@ -20,6 +20,6 @@ export default async (req, res, next) => {
 
     return next();
   } catch (err) {
-    return res.status(401).json({ error: 'Token invalid.' });
+    return res.status(401).json({ error: 'Token inválido' });
   }
 };
